@@ -29,6 +29,30 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
+  void removeItem(int index) {
+    var currItem = _groceryItems[index];
+
+    setState(() {
+      _groceryItems.remove(currItem);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 2),
+        content: const Text('Item deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _groceryItems.add(currItem);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget bodyContent = const Center(
@@ -41,15 +65,21 @@ class _GroceryListState extends State<GroceryList> {
     if (_groceryItems.isNotEmpty) {
       bodyContent = ListView.builder(
         itemCount: _groceryItems.length,
-        itemBuilder: (ctx, index) => ListTile(
-          title: Text(_groceryItems[index].name),
-          leading: Container(
-            width: 24,
-            height: 24,
-            color: _groceryItems[index].category.categoryColor,
-          ),
-          trailing: Text(
-            _groceryItems[index].quantity.toString(),
+        itemBuilder: (ctx, index) => Dismissible(
+          key: ValueKey(_groceryItems[index].id),
+          onDismissed: (direction) {
+            removeItem(index);
+          },
+          child: ListTile(
+            title: Text(_groceryItems[index].name),
+            leading: Container(
+              width: 24,
+              height: 24,
+              color: _groceryItems[index].category.categoryColor,
+            ),
+            trailing: Text(
+              _groceryItems[index].quantity.toString(),
+            ),
           ),
         ),
       );
