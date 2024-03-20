@@ -38,6 +38,13 @@ class _GroceryListState extends State<GroceryList> {
       });
     }
 
+    if (response.body == 'null') {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final Map<String, dynamic> listData = json.decode(response.body);
 
     final List<GroceryItem> loadedItems = [];
@@ -86,7 +93,7 @@ class _GroceryListState extends State<GroceryList> {
     });
 
     final url = Uri.https(
-      'flutter-prep-84353-defrault-rtdb.firebaseio.com',
+      'flutter-prep-84353-default-rtdb.firebaseio.com',
       'shopping-list/${currItem.id}.json',
     );
 
